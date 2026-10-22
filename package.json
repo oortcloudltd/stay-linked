@@ -1,0 +1,46 @@
+{
+  "name": "stay-linked-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "node --test",
+    "db:init": "node src/database/initDb.js"
+  },
+  "keywords": [],
+  "author": "lawrence savio",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@paystack/paystack-sdk": "^1.0.1",
+    "axios": "^1.17.0",
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.10.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.5.2",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.1.1",
+    "node-cron": "^4.2.1",
+    "nodemailer": "^8.0.10",
+    "pg": "^8.21.0",
+    "qrcode": "^1.5.4",
+    "sharp": "^0.34.5",
+    "socket.io": "^4.8.3",
+    "uuid": "^14.0.0",
+    "zod": "^4.4.3",
+    "multer-storage-cloudinary-v2": "^1.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1",
+    "@types/pg": "^8.20.0",
+    "nodemon": "^3.1.14",
+    "tsx": "^4.22.4"
+  }
+}
