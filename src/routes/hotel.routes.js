@@ -1,7 +1,7 @@
 /**
  * src/routes/hotel.routes.js
  */
-
+// ss
 import { Router } from 'express';
 import * as hotelController from '../controllers/hotel.controller.js';
 import { protect, protectOwner, restrictTo } from '../middleware/auth.middleware.js';

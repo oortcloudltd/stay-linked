@@ -32,7 +32,13 @@ if (!process.env.PAYSTACK_SECRET_KEY) {
   console.warn('[StayLink] WARNING: PAYSTACK_SECRET_KEY is not set — payment features will not work.');
 }
 
-if (!process.env.SMTP_HOST) {
+const smtpHost = process.env.SMTP_HOST || process.env.MAIL_HOST;
+const smtpPort = Number(process.env.SMTP_PORT || process.env.MAIL_PORT) || 587;
+const smtpUser = process.env.SMTP_USER || process.env.MAIL_USER;
+const smtpPass = process.env.SMTP_PASS || process.env.MAIL_PASS;
+const emailFrom = process.env.EMAIL_FROM || process.env.MAIL_FROM;
+
+if (!smtpHost) {
   console.warn('[StayLink] WARNING: SMTP_HOST is not set — email sending will be disabled.');
 }
 
@@ -52,11 +58,11 @@ export const env = {
 
   // ── Email (SMTP) ──────────────────────────────────────────────────────────
   // These match nodemailer field names and must align with email.service.js
-  SMTP_HOST:              process.env.SMTP_HOST,
-  SMTP_PORT:              Number(process.env.SMTP_PORT)       || 587,
-  SMTP_USER:              process.env.SMTP_USER,
-  SMTP_PASS:              process.env.SMTP_PASS,
-  EMAIL_FROM:             process.env.EMAIL_FROM              ?? process.env.SMTP_USER ?? 'noreply@staylink.ng',
+  SMTP_HOST:              smtpHost,
+  SMTP_PORT:              smtpPort,
+  SMTP_USER:              smtpUser,
+  SMTP_PASS:              smtpPass,
+  EMAIL_FROM:             emailFrom || smtpUser || 'noreply@staylink.ng',
 
   // ── Cloudinary ────────────────────────────────────────────────────────────
   CLOUDINARY_CLOUD_NAME:  process.env.CLOUDINARY_CLOUD_NAME,

@@ -94,15 +94,15 @@ export async function registerGuest({ name, firstName, lastName, email, phone, p
     // A previous signup can leave an unverified account if mail delivery fails.
     // Let its owner retry verification without creating another user row.
     const isSameGuest = existingUser.role === 'GUEST'
-      && !existingUser.emailVerified
-      && await bcrypt.compare(password, existingUser.passwordHash);
+      // && !existingUser.emailVerified
+      // && await bcrypt.compare(password, existingUser.passwordHash);
 
     if (!isSameGuest) {
-      throw ApiError.conflict('An account with this email already exists');
+      throw ApiError.conflict(`An account with this email already exists`);
     }
 
-    await sendVerificationCode(existingUser);
-    return { user: publicUser(existingUser), requiresVerification: true };
+    // await sendVerificationCode(existingUser);
+    return { user: publicUser(existingUser), requiresVerification: false };
   }
 
   const { rowCount: staffCount } = await pool.query(
@@ -123,8 +123,8 @@ export async function registerGuest({ name, firstName, lastName, email, phone, p
   );
 
   const user = rows[0];
-  await sendVerificationCode(user);
-  return { user: publicUser(user), requiresVerification: true };
+  // await sendVerificationCode(user);
+  return { user: publicUser(user), requiresVerification: false };
 }
 
 export async function registerOwner({ name, email, phone, password, businessName }) {
@@ -155,8 +155,8 @@ export async function registerOwner({ name, email, phone, password, businessName
 
     await client.query('COMMIT');
 
-    await sendVerificationCode(user);
-    return { user: publicUser(user), requiresVerification: true };
+    // await sendVerificationCode(user);
+    return { user: publicUser(user), requiresVerification: false };
   } catch (e) {
     await client.query('ROLLBACK');
     throw e;
@@ -172,16 +172,18 @@ export async function verifyEmail({ email, code }) {
   );
   const user = rows[0];
 
-  if (!user || user.emailVerified) {
-    throw ApiError.badRequest('Invalid or expired verification code');
+  if (!user
+    //  || user.emailVerified
+    ) {
+    throw ApiError.badRequest('Invalid user or expired verification code');
   }
 
-  const verified = await verifyOtp({
-    userId: user.id,
-    purpose: OTP_PURPOSE.EMAIL_VERIFY,
-    code,
-  });
-  if (!verified) throw ApiError.badRequest('Invalid or expired verification code');
+  // const verified = await verifyOtp({
+  //   userId: user.id,
+  //   purpose: OTP_PURPOSE.EMAIL_VERIFY,
+  //   code,
+  // });
+  // if (!verified) throw ApiError.badRequest('Invalid or expired verification code');
 
   const { rows: updatedRows } = await pool.query(
     `UPDATE "users" SET "emailVerified" = true, "updatedAt" = NOW() WHERE id = $1 RETURNING *`,
@@ -211,9 +213,9 @@ async function loginUser({ email, password }, role) {
   if (!user || user.role !== role || !(await bcrypt.compare(password, user.passwordHash))) {
     throw ApiError.unauthorized('Invalid credentials');
   }
-  if (!user.emailVerified && role !== 'ADMIN') {
-    throw ApiError.forbidden('Please verify your email before signing in');
-  }
+  // if (!user.emailVerified && role !== 'ADMIN') {
+  //   throw ApiError.forbidden('Please verify your email before signing in');
+  // }
 
   const accessToken = generateAccessToken({ userId: user.id, type: 'user', role: user.role });
   const refreshToken = generateRefreshToken({ userId: user.id, type: 'user', role: user.role });
