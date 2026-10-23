@@ -8,3 +8,5 @@ demo-data/
 #to remove .history but keep .history/README.md
 .history/
 !/.history/README.md
+.env
+.env.*
