@@ -12,7 +12,7 @@ export async function getAvailability(db, { hotelId, checkIn, checkOut, now = ne
 
   // 1. Get all active rooms for hotel
   const roomsRes = await query(
-    `SELECT * FROM "Room" WHERE "hotelId" = $1 AND "isAvailable" = true`,
+    `SELECT * FROM "rooms" WHERE "hotelId" = $1 AND "isAvailable" = true`,
     [hotelId]
   );
   const rooms = roomsRes.rows;
@@ -35,7 +35,7 @@ export async function getAvailability(db, { hotelId, checkIn, checkOut, now = ne
   // HOLD + LIVE_STATES that overlap, plus all CHECKED_IN (filtered in JS)
   const bookingsRes = await query(
     `SELECT "roomId", "roomTypeKey", quantity, status, "checkOut", "holdExpiresAt"
-     FROM "Booking"
+     FROM "bookings"
      WHERE "hotelId" = $1
        AND "checkIn" < $2
        AND (
@@ -72,7 +72,7 @@ export async function withRoomTypeLock(pool, {
     if (idempotencyKey) {
       await client.query(`SELECT pg_advisory_xact_lock(hashtext($1))`, [`idempotency:${idempotencyKey}`]);
       const existingRes = await client.query(
-        `SELECT * FROM "Booking" WHERE "userId" = $1 AND "idempotencyKey" = $2 LIMIT 1`,
+        `SELECT * FROM "bookings" WHERE "userId" = $1 AND "idempotencyKey" = $2 LIMIT 1`,
         [userId, idempotencyKey]
       );
       if (existingRes.rows[0]) {

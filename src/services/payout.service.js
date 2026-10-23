@@ -17,8 +17,8 @@ async function payoutForBooking({ bookingId, actorId, actorType }) {
       `SELECT b.*, 
               h."bankAccountVerified", h."bankAccountNumber", h."bankCode", 
               h."commissionRate", h."hotelId" as hotel_id, h.id as hotel_pk
-       FROM "Booking" b
-       JOIN "Hotel" h ON h.id = b."hotelId"
+       FROM "bookings" b
+       JOIN "hotels" h ON h.id = b."hotelId"
        WHERE b.id = $1
        FOR UPDATE OF b`,
       [bookingId]
@@ -55,12 +55,12 @@ async function payoutForBooking({ bookingId, actorId, actorType }) {
     await client.query('BEGIN');
 
     await client.query(
-      `UPDATE "Booking" SET "paymentStatus" = 'RELEASED', "updatedAt" = NOW() WHERE id = $1`,
+      `UPDATE "bookings" SET "paymentStatus" = 'RELEASED', "updatedAt" = NOW() WHERE id = $1`,
       [bookingId]
     );
 
     await client.query(
-      `INSERT INTO "Transaction" (
+      `INSERT INTO "transactions" (
         id, "bookingId", type, status, provider, "providerReference", 
         amount, commission, "hotelId", "rawResponse", "createdAt"
       ) VALUES (
