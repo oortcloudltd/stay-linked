@@ -52,10 +52,10 @@ const ALLOWED_ORIGINS = [
 
 if (!isProd) {
   ALLOWED_ORIGINS.push(
-    'http://localhost:5173',
-    'http://localhost:5000',
-    'http://localhost:3000',
     'http://127.0.0.1:5173',
+    'https://stay-linked.netlify.app',
+    'https://main--stay-linked.netlify.app',
+    'http://localhost:5000'
   );
   if (process.env.REPLIT_DEV_DOMAIN) ALLOWED_ORIGINS.push(`https://${process.env.REPLIT_DEV_DOMAIN}`);
 }
